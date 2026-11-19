@@ -156,6 +156,25 @@ const nested = relate(parents, {
 const count: number | undefined = nested[0]!.child?.grandchildren[0]?.n;
 void count;
 
+const callbackNested = relate(parents, ({ one: relatedOne, many: relatedMany }) => ({
+  child: relatedOne(children, {
+    on: { id: "parentId", tenantId: "tenant" },
+    include: ({ many: nestedMany }) => ({
+      grandchildren: nestedMany([{ childTitle: "child", n: 1 }], { on: { title: "childTitle" } }),
+    }),
+  }),
+  children: relatedMany(children, {
+    on: { id: "parentId" },
+    include: ({ one: nestedOne }) => ({
+      grandchild: nestedOne([{ childTitle: "child", n: 1 }], { on: { title: "childTitle" } }),
+    }),
+  }),
+}));
+const callbackNestedCount: number | undefined = callbackNested[0]!.child?.grandchildren[0]?.n;
+const callbackNestedOneCount: number | null | undefined = callbackNested[0]!.children[0]!.grandchild?.n;
+void callbackNestedCount;
+void callbackNestedOneCount;
+
 type NestedRow = (typeof nested)[number];
 type _resultRowIsPrettified = Expect<Equal<keyof NestedRow, "id" | "tenantId" | "nullableId" | "child">>;
 

@@ -13,27 +13,36 @@ import type {
 } from "./types.js";
 
 type Include = Readonly<Record<string, AnyRelationDescriptor>>;
-type IncludeFactory<C> = (relations: RelationBuilders<C>) => Include;
-type ResolvedInclude<I> = I extends (...args: never[]) => infer R ? R : I;
-type ResolvedOptionsInclude<O> = O extends { readonly include: infer I } ? ResolvedInclude<I> : undefined;
+type IncludeFactory<C, R extends Include = Include> = (relations: RelationBuilders<C>) => R;
+type ResolvedOptionsInclude<O> = O extends { readonly include: infer I } ? I : undefined;
 
 export interface RelationBuilders<P> {
+  one<C, const I extends Include, const O extends InferredRelationOptions<P, C> & { readonly defined?: true }>(
+    rows: readonly C[],
+    options: O & { readonly include: IncludeFactory<C, I> } & ValidateRelationOptions<P, C, O>,
+  ): RelationDescriptor<C, "one", I, O, IsDefined<O>>;
+
   one<
     C,
     const O extends InferredRelationOptions<P, C> & {
       readonly defined?: true;
-      readonly include?: Include | IncludeFactory<C>;
+      readonly include?: Include;
     },
   >(
     rows: readonly C[],
     options: O & ValidateRelationOptions<P, C, O>,
   ): RelationDescriptor<C, "one", ResolvedOptionsInclude<O>, O, IsDefined<O>>;
 
+  many<C, const I extends Include, const O extends InferredRelationOptions<P, C> & { readonly defined?: never }>(
+    rows: readonly C[],
+    options: O & { readonly include: IncludeFactory<C, I> } & ValidateRelationOptions<P, C, O>,
+  ): RelationDescriptor<C, "many", I, O, false>;
+
   many<
     C,
     const O extends InferredRelationOptions<P, C> & {
       readonly defined?: never;
-      readonly include?: Include | IncludeFactory<C>;
+      readonly include?: Include;
     },
   >(
     rows: readonly C[],
