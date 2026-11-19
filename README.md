@@ -14,6 +14,16 @@ RelateKit requires Node.js 18 or newer and uses ESM.
 
 Run the documentation site locally with `npm run docs:start`. See [website/README.md](website/README.md) for the build command.
 
+## Install the RelateKit agent skill
+
+Install the RelateKit skill into an agent-supported project with the Skills CLI:
+
+```sh
+npx skills add imteammy/relatekit --skill relatekit
+```
+
+The Skills CLI requires Node.js 22.20 or newer. This is separate from RelateKit itself, which supports Node.js 18 or newer. See the [Skills CLI documentation](https://skills.sh/docs/cli) for agent selection and global installation options.
+
 ## Basic use
 
 ```ts

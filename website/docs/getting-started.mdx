@@ -14,6 +14,16 @@ RelateKit requires Node.js 18 or newer and uses ESM.
 npm install relatekit
 ```
 
+## Install the RelateKit agent skill
+
+If you use a coding agent that supports Agent Skills, install RelateKit's reusable guidance into your project with the Skills CLI:
+
+```sh
+npx skills add imteammy/relatekit --skill relatekit
+```
+
+The Skills CLI requires Node.js 22.20 or newer. RelateKit itself supports Node.js 18 or newer. See the [Skills CLI documentation](https://skills.sh/docs/cli) for options to select agents or install the skill globally.
+
 ## Relate two arrays
 
 Use `one()` for a single related row and `many()` for a list. The `on` object maps a parent field to a child field.
