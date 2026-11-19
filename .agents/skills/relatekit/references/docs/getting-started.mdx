@@ -1,0 +1,59 @@
+---
+sidebar_position: 2
+title: Getting started
+description: Install RelateKit and create your first related result.
+---
+
+# Getting started
+
+## Install RelateKit
+
+RelateKit requires Node.js 18 or newer and uses ESM.
+
+```sh
+npm install relatekit
+```
+
+## Relate two arrays
+
+Use `one()` for a single related row and `many()` for a list. The `on` object maps a parent field to a child field.
+
+```ts
+import { many, one, relate } from "relatekit";
+
+const tasks = [{ id: "t1", propertyId: "p1" }];
+const properties = [{ id: "p1", name: "HQ" }];
+const assignments = [{ id: "a1", taskId: "t1" }];
+
+const result = relate(tasks, {
+  property: one(properties, { on: { propertyId: "id" } }),
+  assignments: many(assignments, { on: { id: "taskId" } }),
+});
+```
+
+`result[0].property` is the matching property or `null`. `result[0].assignments` is an array. A missing many relation returns an empty array.
+
+## Use inferred keys
+
+The callback form ties relation keys to the parent row type and gives TypeScript enough context to infer both sides.
+
+```ts
+const result = relate(tasks, ({ one, many }) => ({
+  property: one(properties, { on: { propertyId: "id" } }),
+  assignments: many(assignments, { local: "id", foreign: "taskId" }),
+}));
+```
+
+## Relate one object
+
+When the input is one object, `relate()` returns one object:
+
+```ts
+const result = relate(tasks[0]!, ({ many }) => ({
+  assignments: many(assignments, { on: { id: "taskId" } }),
+}));
+
+result.assignments;
+```
+
+Continue with the [relation guide](/docs/guides/relations) or look up the [API](/docs/api).

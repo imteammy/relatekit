@@ -1,0 +1,78 @@
+---
+sidebar_position: 1
+title: Define relations
+description: Use one, many, nested includes, and composite keys.
+---
+
+# Define relations
+
+## Choose one or many
+
+`one()` returns a matching object or `null`. `many()` returns every matching object in input order.
+
+```ts
+const result = relate(tasks, ({ one, many }) => ({
+  property: one(properties, { on: { propertyId: "id" } }),
+  assignments: many(assignments, { on: { id: "taskId" } }),
+}));
+```
+
+## Require a one relation
+
+Set `defined: true` when a missing match is an error. The result type then removes `null` from that property.
+
+```ts
+const result = relate(tasks, ({ one }) => ({
+  property: one(properties, {
+    on: { propertyId: "id" },
+    defined: true,
+  }),
+}));
+
+result[0]!.property.name;
+```
+
+If no property matches, RelateKit throws `RelateKitError` with code `INVALID_CARDINALITY`.
+
+## Add nested relations
+
+Use `include` to relate rows at another level. A callback gives the nested relation its own inferred row types.
+
+```ts
+const result = relate(tasks, ({ many }) => ({
+  assignments: many(assignments, {
+    on: { id: "taskId" },
+    include: ({ one }) => ({
+      user: one(users, { local: "userId", foreign: "id" }),
+    }),
+  }),
+}));
+```
+
+## Match composite keys
+
+Add multiple entries to `on`. Every pair must match.
+
+```ts
+const result = relate(tasks, ({ one }) => ({
+  property: one(properties, {
+    on: {
+      organizationId: "organizationId",
+      propertyId: "id",
+    },
+  }),
+}));
+```
+
+You can also use tuple syntax:
+
+```ts
+const result = relate(tasks, ({ one }) => ({
+  property: one(properties, {
+    local: ["organizationId", "propertyId"],
+    foreign: ["organizationId", "id"],
+  }),
+}));
+```
+
+Tuple lengths must match. RelateKit indexes composite keys as nested maps, so key values cannot collide because of string separators. A `null` or `undefined` key component never matches.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "RelateKit"
+  short_description: "Build typed nested results with RelateKit"
+  default_prompt: "Show me how to use RelateKit for this TypeScript relation mapping task."
