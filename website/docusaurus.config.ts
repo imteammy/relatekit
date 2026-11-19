@@ -5,9 +5,9 @@ const config: Config = {
   title: "RelateKit",
   tagline: "Build typed nested objects from related data sets",
   favicon: "img/relatekit-icon.png",
-  url: "https://relatekit.dev",
-  baseUrl: "/",
-  organizationName: "relatekit",
+  url: process.env.DOCUSAURUS_URL ?? "https://relatekit.dev",
+  baseUrl: process.env.DOCUSAURUS_BASE_URL ?? "/",
+  organizationName: "imteammy",
   projectName: "relatekit",
   onBrokenLinks: "throw",
   markdown: {
