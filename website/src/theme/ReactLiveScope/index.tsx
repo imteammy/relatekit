@@ -11,7 +11,6 @@ function ShowResult({ value }: { value: unknown }): React.JSX.Element {
 
 const ReactLiveScope = {
   React,
-  ...React,
   relate,
   one,
   many,
