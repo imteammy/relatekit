@@ -1,0 +1,34 @@
+---
+sidebar_position: 1
+slug: /
+title: RelateKit
+description: Create typed nested objects from separate arrays.
+---
+
+# RelateKit
+
+RelateKit combines separate arrays into typed nested objects. It runs synchronously, uses no runtime dependencies, and leaves input data unchanged.
+
+```jsx live noInline
+const tasks = [{ id: "t1", propertyId: "p1" }];
+const properties = [{ id: "p1", name: "HQ" }];
+const assignments = [{ id: "a1", taskId: "t1" }];
+
+const result = relate(tasks, {
+  property: one(properties, { on: { propertyId: "id" } }),
+  assignments: many(assignments, { on: { id: "taskId" } }),
+});
+
+render(<ShowResult value={result} />);
+```
+
+Edit the example to change the keys or rows. The result panel runs the real RelateKit package in your browser. The playground uses JavaScript. TypeScript still checks the examples in the guide and the [API reference](/docs/api).
+
+Use [`one()` and `many()`](/docs/guides/relations) to describe relations. TypeScript checks mapped keys and nested results. Strict mode is the default. Read [Getting started](/docs/getting-started) to install RelateKit and build your first result.
+
+## What RelateKit does
+
+- Maps in-memory rows by one or more keys.
+- Builds nested one-to-one and one-to-many results.
+- Infers key names and result types in the callback form.
+- Throws on duplicate matches for `one()` in strict mode.

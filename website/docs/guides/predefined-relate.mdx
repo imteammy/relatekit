@@ -1,0 +1,76 @@
+---
+sidebar_position: 2
+title: Predefine a relate function
+description: Bind relation data and reuse the same relate configuration.
+---
+
+# Predefine a relate function
+
+You can wrap a `relate()` call in a reusable function in two ways. Pass relation data on every call, or bind it once with currying.
+
+## Pass relation data on each call
+
+An ordinary function can accept the parent row and relation data as arguments:
+
+```ts
+import { relate } from "relatekit";
+
+type Task = { id: string; propertyId: string };
+type Property = { id: string; name: string };
+type Assignment = { id: string; taskId: string };
+
+const properties: Property[] = [{ id: "p1", name: "HQ" }];
+const assignments: Assignment[] = [{ id: "a1", taskId: "t1" }];
+const task: Task = { id: "t1", propertyId: "p1" };
+const tasks: Task[] = [task, { id: "t2", propertyId: "p1" }];
+type TaskRelations = {
+  properties: readonly Property[];
+  assignments: readonly Assignment[];
+};
+
+function mapTaskRelate(task: Task, related: TaskRelations) {
+  return relate(task, ({ one, many }) => ({
+    property: one(related.properties, {
+      on: { propertyId: "id" },
+    }),
+    assignments: many(related.assignments, {
+      on: { id: "taskId" },
+    }),
+  }));
+}
+
+const mappedTask = mapTaskRelate(task, { properties, assignments });
+
+const mappedTasks = tasks.map((task) =>
+  mapTaskRelate(task, { properties, assignments }),
+);
+```
+
+`mapTaskRelate()` receives a task and the relation rows in a plain object. Inside it, `relate()` handles the matching and returns the inferred nested result. The callback form infers and checks the parent and child keys.
+
+## Bind relation data with currying
+
+If the relation data stays the same across many calls, return a mapper that closes over it:
+
+```ts
+function createTaskRelater(related: TaskRelations) {
+  return (task: Task) =>
+    relate(task, ({ one, many }) => ({
+      property: one(related.properties, {
+        on: { propertyId: "id" },
+      }),
+      assignments: many(related.assignments, {
+        on: { id: "taskId" },
+      }),
+    }));
+}
+
+const relateTask = createTaskRelater({ properties, assignments });
+
+const mappedTask = relateTask(task);
+const mappedTasks = tasks.map(relateTask);
+```
+
+`createTaskRelater()` takes the relation data once. The returned `relateTask()` function can then map one task or be passed directly to `Array.map()`.
+
+This uses the default strict behavior. If a task matches more than one property, RelateKit throws. Use [`relatekit/loose`](/docs/guides/modes-and-errors) when the first matching row should win instead.

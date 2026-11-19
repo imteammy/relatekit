@@ -1,0 +1,57 @@
+---
+sidebar_position: 5
+title: API reference
+description: Public functions, type utilities, entry points, and runtime behavior.
+---
+
+# API reference
+
+## `relate(parents, relations)`
+
+Relates a parent object or array of parent objects to configured child rows. The result keeps the same object or array shape as the input. It creates new objects and does not mutate inputs.
+
+The second argument can be a relation object or a callback that receives `one` and `many` builders.
+
+## `one(rows, options)`
+
+Creates a one-to-one relation descriptor.
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `on` | `Record<ParentKey, ChildKey>` | Maps parent keys to child keys. |
+| `local` | `string` | Parent key for single or composite key syntax. |
+| `foreign` | `string` | Child key for single or composite key syntax. |
+| `defined` | `true` | Throws when no child matches and removes `null` from the result type. |
+| `include` | Relation object or callback | Adds nested relations. |
+
+Use either `on`, or `local` and `foreign`.
+
+## `many(rows, options)`
+
+Creates a one-to-many relation descriptor. It accepts the key and `include` options from `one()`. It always returns an array, including when there are no matches.
+
+## Type utilities
+
+- `Prettify<T>` expands one object intersection.
+- `PrettifyDeep<T, MaxDepth = 10, Preserve = never>` expands nested object intersections up to `MaxDepth`.
+- `RelateItem<P, R>` describes a single related parent object.
+- `RelateResult<P, R>` describes an array of related parent objects.
+- `RelationKey` is `string | number | bigint | boolean | symbol`.
+
+## Entry points
+
+| Import | Duplicate `one()` matches |
+| --- | --- |
+| `relatekit` | Throw. This is the default. |
+| `relatekit/strict` | Throw. |
+| `relatekit/loose` | Keep the first match. |
+
+## Runtime behavior
+
+- Requires Node.js 18 or newer and ESM.
+- Synchronous. No runtime dependencies.
+- Preserves child row order for `many()`.
+- Does not mutate input rows.
+- A missing `one()` relation returns `null`, unless `defined: true` is set.
+- A missing `many()` relation returns an empty array.
+- `null` and `undefined` key components do not match.

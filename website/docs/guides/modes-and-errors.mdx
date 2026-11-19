@@ -1,0 +1,37 @@
+---
+sidebar_position: 3
+title: Choose a mode and handle errors
+description: Use strict or loose duplicate handling and inspect RelateKit errors.
+---
+
+# Choose a mode and handle errors
+
+## Use strict mode
+
+The default `relatekit` entry point and `relatekit/strict` throw when `one()` finds duplicate matches.
+
+```ts
+import { many, one, relate } from "relatekit";
+// The same strict behavior is available from "relatekit/strict".
+```
+
+The error code is `DUPLICATE_KEY`.
+
+## Use loose mode
+
+Import from `relatekit/loose` to keep the first matching row when `one()` finds duplicates. Input order decides which row RelateKit keeps.
+
+```ts
+import { many, one, relate } from "relatekit/loose";
+```
+
+## Inspect errors
+
+`RelateKitError` exposes a `code` and a `path` for the failed relation.
+
+| Code | Meaning |
+| --- | --- |
+| `DUPLICATE_KEY` | `one()` found multiple matches in strict mode. |
+| `INVALID_KEY` | A relation row is not a non-null object. |
+| `INVALID_CONFIGURATION` | A key mapping is empty or composite key lengths differ. |
+| `INVALID_CARDINALITY` | A `defined: true` one relation found no match. |

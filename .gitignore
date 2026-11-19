@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+.test-dist/
+.fallow/
+*.tsbuildinfo
+build/
+.docusaurus/
+website/.docusaurus/

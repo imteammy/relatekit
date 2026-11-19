@@ -1,0 +1,44 @@
+---
+sidebar_position: 2
+title: Work with TypeScript
+description: Understand key inference, result mutability, and readable types.
+---
+
+# Work with TypeScript
+
+## Infer relation keys
+
+Use the callback form to infer key names from both row types:
+
+```ts
+const result = relate(tasks, ({ one, many }) => ({
+  property: one(properties, { on: { propertyId: "id" } }),
+  assignments: many(assignments, { local: "id", foreign: "taskId" }),
+}));
+```
+
+The callback checks parent keys, child keys, compatible value types, and composite tuple lengths. The object form also works. It validates the complete relation configuration.
+
+## Keep result types readable
+
+RelateKit expands result types up to 10 levels so editor tooltips show the final object shape. `Date`, `File`, `FileList`, functions, tuples, arrays, and classes with methods keep their type behavior.
+
+Use `Prettify` or `PrettifyDeep` for application types:
+
+```ts
+import type { Prettify, PrettifyDeep } from "relatekit";
+
+type User = Prettify<UserRow & { roles: Role[] }>;
+type Response = PrettifyDeep<RawResponse>;
+type WiderResponse = PrettifyDeep<RawResponse, 15>;
+```
+
+TypeScript cannot distinguish a class with only public fields from a plain object. Pass field-only class types as the third parameter to preserve them:
+
+```ts
+type Response = PrettifyDeep<RawResponse, 10, FieldOnlyClass>;
+```
+
+## Preserve mutability
+
+Result properties follow the input type. Mutable input fields remain mutable. Readonly input fields remain readonly. Relation arrays are new arrays, so `many()` results are mutable.

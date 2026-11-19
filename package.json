@@ -1,0 +1,63 @@
+{
+  "name": "relatekit",
+  "version": "0.1.0",
+  "description": "Turn disconnected result sets into typed nested objects.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/imteammy/relatekit.git"
+  },
+  "homepage": "https://github.com/imteammy/relatekit#readme",
+  "bugs": {
+    "url": "https://github.com/imteammy/relatekit/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./strict": {
+      "types": "./dist/strict.d.ts",
+      "import": "./dist/strict.js"
+    },
+    "./loose": {
+      "types": "./dist/loose.d.ts",
+      "import": "./dist/loose.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "test:performance": "tsc -p tsconfig.performance.json && node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --config vitest.performance.config.ts --disableConsoleIntercept",
+    "test:watch": "vitest",
+    "test:types": "tsc -p tsconfig.types.json",
+    "check": "npm run build && npm run test && npm run test:types",
+    "docs:start": "npm run build && npm run docs:typecheck && docusaurus start website --no-open",
+    "docs:build": "npm run build && npm run docs:typecheck && docusaurus build website --out-dir build",
+    "docs:typecheck": "tsc -p website/tsconfig.json --noEmit",
+    "docs:serve": "docusaurus serve website --dir build --no-open"
+  },
+  "devDependencies": {
+    "@docusaurus/core": "^3.10.2",
+    "@docusaurus/module-type-aliases": "^3.10.2",
+    "@docusaurus/preset-classic": "^3.10.2",
+    "@docusaurus/theme-live-codeblock": "^3.10.2",
+    "@docusaurus/tsconfig": "^3.10.2",
+    "@docusaurus/types": "^3.10.2",
+    "@easyops-cn/docusaurus-search-local": "^0.55.3",
+    "@types/node": "^22.20.5",
+    "clsx": "^2.1.1",
+    "prism-react-renderer": "^2.4.1",
+    "typescript": "^5.9.3",
+    "vitest": "4.1.12"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}
